@@ -15,6 +15,7 @@ This repository contains code to reduce large DUNE flux `dk2nu` and `AlcoveTrack
 1. Compile the code
 
 g++ -o run_dk2nuTree run_dk2nuTree.cpp dk2nuTree.C $(root-config --cflags --libs)
+
 g++ -o processOneFile processOneFile.cpp alcoveTree.C $(root-config --cflags --libs)
 
 2. Edit run_skimming_batch.sh to set
