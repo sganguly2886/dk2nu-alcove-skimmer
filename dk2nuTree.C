@@ -69,11 +69,6 @@ void dk2nuTree::Loop()
   outtree->Branch("bwt2", &bwt2);
   outtree->Branch("decaywt", &decay_wt);
 
-  //int rseed = theseed;
-  //cout << ofname << " " << rseed << endl;
-
-  //TRandom3* mrand1 = new TRandom3(rseed);
-  //TRandom3* mrand2 = new TRandom3(rseed + 1);
 
   Long64_t nbytes = 0, nb = 0;
   for (Long64_t jentry = 0; jentry < nentries; jentry++) {
@@ -125,8 +120,6 @@ void dk2nuTree::Loop()
   cout << "writing tree" << endl;
 
   std::ofstream myoutfile;
-  //myoutfile.open("POTnum.txt", std::ios_base::app);
-  //myoutfile << _fnameid << " " << mpotnum << " " <<totalPOT<<endl;
 
   outtree->Write();
 
@@ -144,7 +137,7 @@ dk2nuTree::dk2nuTree(int type, TString fnameID, TTree *tree) : fChain(0), totalP
   fname += ".dk2nu.root";
 
   _fnameid = fnameID;
-  //theseed = seed;
+ 
 
   TString tofname;
   tofname += "outfile";
@@ -167,7 +160,7 @@ dk2nuTree::dk2nuTree(int type, TString fnameID, TTree *tree) : fChain(0), totalP
 
 dk2nuTree::dk2nuTree(TString filename, TString fnameID) : fChain(0), totalPOT(0)
 {
-  //theseed = seed;
+ 
   TString tofname;
   
     TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject(filename);
