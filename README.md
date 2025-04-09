@@ -36,5 +36,7 @@ bash run_skimming_batch.sh
 Output
 
 dk2nu_skims/ — reduced dk2nu trees
+
 alcove_skims/ — reduced alcove trees
+
 logs/ — logs for debugging
