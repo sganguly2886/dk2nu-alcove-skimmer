@@ -143,26 +143,30 @@ watch -n 5 'jobsub_q --user YOUR_USERNAME -G dune'
 
 
 Grid Skimming (AlcoveTracks)
+
 1. Prepare Tarball
-cd /your/workdir/
+
+cd /exp/dune/app/users/sganguly/duneML_nominal/g4lbne
 tar -cjvf skim_job_alcove_final.tar.bz2 -C skim_job_alcove_final .
-ifdh cp --force skim_job_alcove_final.tar.bz2 /pnfs/dune/scratch/users/YOUR_USERNAME/
+ifdh cp --force skim_job_alcove_final.tar.bz2 /pnfs/dune/scratch/users/sganguly/
 
 2. Submit Job
+
 jobsub_submit \
   --memory=4000MB --disk=4GB --expected-lifetime=1h \
   --group=dune --role=Analysis \
   --resource-provides=usage_model=OPPORTUNISTIC \
-  --tar_file_name=/pnfs/dune/scratch/users/YOUR_USERNAME/skim_job_alcove_final.tar.bz2 \
-  -d OUTPUT /pnfs/dune/scratch/users/YOUR_USERNAME/skimmed_output_alcove/ \
-  -L /pnfs/dune/scratch/users/YOUR_USERNAME/jobsub/skim_job_alcove_$RANDOM.log \
-  file:///exp/dune/app/users/YOUR_USERNAME/duneML_nominal/g4lbne/skim_job_alcove_final/skim_job_wrapper_alcove.sh \
-  /pnfs/dune/scratch/users/YOUR_USERNAME/fluxfiles/g4lbne/your_input_file.root
+  --tar_file_name=/pnfs/dune/scratch/users/sganguly/skim_job_alcove_final.tar.bz2 \
+  -d OUTPUT /pnfs/dune/scratch/users/sganguly/skimmed_output_alcove/ \
+  -L /pnfs/dune/scratch/users/sganguly/jobsub/skim_job_alcove_$RANDOM.log \
+  file:///exp/dune/app/users/sganguly/duneML_nominal/g4lbne/skim_job_alcove_final/skim_job_wrapper_alcove.sh \
+  /pnfs/dune/scratch/users/sganguly/fluxfiles/g4lbne/your_input_file.root
 
 3. Check Output
-/pnfs/dune/scratch/users/YOUR_USERNAME/skimmed_output_alcove/
 
-4.Monitor Jobs
-jobsub_q --user YOUR_USERNAME -G dune
+/pnfs/dune/scratch/users/sganguly/skimmed_output_alcove/
 
+4. Monitor Jobs
+
+jobsub_q --user sganguly -G dune
 
