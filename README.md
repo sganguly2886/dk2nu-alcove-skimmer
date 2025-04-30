@@ -64,11 +64,36 @@ ifdh cp --force skim_job_test_final.tar.bz2 /pnfs/dune/scratch/users/YOUR_USERNA
 
 
 ### 2. Submit a single job manually
+# Alcove Skimming Workflow
 
+This repository contains scripts and executables to perform skimming of dk2nu flux ROOT files for the DUNE Alcove setup using `processOneFile`.
+
+## Contents
+
+- `skim_job_wrapper_alcove.sh` – Job wrapper script used by `jobsub_submit`. Handles environment setup, input fetching, and file processing.
+- `processOneFile` – Compiled binary that reads input `.root` files and writes skimmed output.
+- `README.md` – This file.
+
+## How to Use
+
+### 1. Build Tarball
+
+From within `g4lbne/`, run:
+
+```bash
+tar -cjvf skim_job_alcove_final.tar.bz2 -C skim_job_alcove_final .
+
+### 2. Upload to pnfs
+
+ifdh cp --force skim_job_alcove_final.tar.bz2 /pnfs/dune/scratch/users/YOUR_USERNAME/
+
+### 3. Submit grid job
+ 
 jobsub_submit \
   --memory=4000MB --disk=4GB --expected-lifetime=1h \
   --group=dune --role=Analysis \
   --resource-provides=usage_model=OPPORTUNISTIC \
+<<<<<<< HEAD
   --tar_file_name=/pnfs/dune/scratch/users/YOUR_USERNAME/skim_job_test_final.tar.bz2 \
   -d OUTPUT /pnfs/dune/scratch/users/YOUR_USERNAME/skimmed_output/ \
   -L /pnfs/dune/scratch/users/YOUR_USERNAME/jobsub/skim_job_test_$RANDOM.log \
@@ -102,3 +127,17 @@ run_dk2nuTree must be built beforehand.
 CVMFS and Spack environment is auto-loaded inside the job wrapper.
 
 Jobs use OPPORTUNISTIC Grid slots by default.
+
+  --tar_file_name=/pnfs/dune/scratch/users/YOUR_USERNAME/skim_job_alcove_final.tar.bz2 \
+  -d OUTPUT /pnfs/dune/scratch/users/YOUR_USERNAME/skimmed_output_alcove/ \
+  -L /pnfs/dune/scratch/users/YOUR_USERNAME/jobsub/skim_job_alcove_$RANDOM.log \
+  file:///exp/dune/app/users/YOUR_USERNAME/duneML_nominal/g4lbne/skim_job_alcove_final/skim_job_wrapper_alcove.sh \
+  /pnfs/dune/scratch/users/YOUR_USERNAME/fluxfiles/g4lbne/your_input_file.root
+
+
+### 4. Check output
+/pnfs/dune/scratch/users/YOUR_USERNAME/skimmed_output_alcove/
+
+### 5. Monitor jobs
+watch -n 5 'jobsub_q --user YOUR_USERNAME -G dune'
+
