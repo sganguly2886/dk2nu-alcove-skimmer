@@ -53,6 +53,14 @@ This repository contains scripts for skimming large DUNE flux `dk2nu` files on t
 
 ## How to Run
 
+
+### Environment Setup (on GPVM)
+Before building or submitting jobs, make sure to set up your environment:
+
+```bash
+source /cvmfs/dune.opensciencegrid.org/dune-spack/spack-v0.23.0-fermi/BIWG/setup-env.sh
+spacktivate g4lbnf-geant4-10-4-3-gcc-12-2-0-cxx17-prof-almalinux9-x86_64_v2
+
 ### 1. Setup your tarball
 
 Prepare your tarball with the compiled `run_dk2nuTree` binary (no need to include the wrapper):
@@ -64,14 +72,14 @@ ifdh cp --force skim_job_test_final.tar.bz2 /pnfs/dune/scratch/users/YOUR_USERNA
 
 
 ### 2. Submit a single job manually
-# Alcove Skimming Workflow
+# dk2nuTree Skimming Workflow
 
 This repository contains scripts and executables to perform skimming of dk2nu flux ROOT files for the DUNE Alcove setup using `processOneFile`.
 
 ## Contents
 
-- `skim_job_wrapper_alcove.sh` – Job wrapper script used by `jobsub_submit`. Handles environment setup, input fetching, and file processing.
-- `processOneFile` – Compiled binary that reads input `.root` files and writes skimmed output.
+- `skim_job_wrapper_final.sh` – Job wrapper script used by `jobsub_submit`. Handles environment setup, input fetching, and file processing.
+- `run_dk2nuTree` – Compiled binary that reads input `.root` files and writes skimmed output.
 - `README.md` – This file.
 
 ## How to Use
@@ -81,11 +89,11 @@ This repository contains scripts and executables to perform skimming of dk2nu fl
 From within `g4lbne/`, run:
 
 ```bash
-tar -cjvf skim_job_alcove_final.tar.bz2 -C skim_job_alcove_final .
+tar -cjvf skim_job_test_final.tar.bz2 -C skim_job_test_final .
 
 ### 2. Upload to pnfs
 
-ifdh cp --force skim_job_alcove_final.tar.bz2 /pnfs/dune/scratch/users/YOUR_USERNAME/
+ifdh cp --force skim_job_test_final.tar.bz2 /pnfs/dune/scratch/users/YOUR_USERNAME/
 
 ### 3. Submit grid job
  
