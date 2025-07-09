@@ -46,14 +46,15 @@ void alcoveTree::SetAlcoveTree(TTree *tree) {
   fAlcove->SetBranchAddress("parPZ", parPZ, &b_parPZ);
 }
 
-void alcoveTree::Loop() {
+void alcoveTree::Loop(TFile* tf)
+ {
   if (!fAlcove) {
     cerr << "Error: Alcove tree not set!" << endl;
     return;
   }
 
   Long64_t nentries = fAlcove->GetEntriesFast();
-  TFile* tf = new TFile(ofname, "RECREATE");
+  // TFile* tf = new TFile(ofname, "RECREATE");
   TTree* outtree = fAlcove->CloneTree(0);  // Create empty copy
 
   for (Long64_t jentry = 0; jentry < nentries; ++jentry) {
@@ -64,6 +65,6 @@ void alcoveTree::Loop() {
   }
 
   outtree->Write();
-  tf->Close();
+  // tf->Close();
   cout << "Full skim written: " << ofname << endl;
 }
