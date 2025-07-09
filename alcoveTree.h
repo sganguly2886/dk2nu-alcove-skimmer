@@ -43,7 +43,7 @@ class alcoveTree {
   virtual ~alcoveTree() {}
 
   virtual void SetAlcoveTree(TTree *tree);
-  virtual void Loop();
+  virtual void Loop(TFile* tf);
 };
 
 #endif
