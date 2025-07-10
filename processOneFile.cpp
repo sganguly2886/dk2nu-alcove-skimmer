@@ -42,15 +42,14 @@ int main(int argc, char* argv[]) {
   // Create output file for both skims
   TFile* output = new TFile((tag + ".combined.root").c_str(), "RECREATE");
 
-  // Run DK2NU skim
-  dk2nuTree dkSkimmer(dk2nuTreePtr);
-  dkSkimmer._fnameid = tag;
+  // Run DK2NU skim using new constructor (tree + tag)
+  dk2nuTree dkSkimmer(dk2nuTreePtr, tag.c_str());
   dkSkimmer.Loop(output);
 
   // Run Alcove skim
   alcoveTree alcSkimmer;
   alcSkimmer._fnameid = tag;
-  alcoveTreePtr->SetMakeClass(1);  // Ensure compatibility if needed
+  alcoveTreePtr->SetMakeClass(1);  // Ensure compatibility
   alcSkimmer.SetAlcoveTree(alcoveTreePtr);
   alcSkimmer.Loop(output);
 
