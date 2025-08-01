@@ -58,6 +58,19 @@ skim_job_test_final/
 From the parent directory:
 tar --exclude="*.tar.bz2" --exclude="skim_job_wrapper_final.sh" \
     -cjvf skim_job_test_final.tar.bz2 -C . skim_job_test_final
+
+
+## Setup VOMS Proxy (Required for Grid Access and ifdh)
+Before copying files to /pnfs or submitting jobs using jobsub, you must generate a valid VOMS proxy:
+voms-proxy-init -noregen -rfc -hours 24 -voms dune:/dune/Role=Analysis
+
+You can verify your proxy is valid with:
+voms-proxy-info
+
+It should show a non-zero time left, like:
+subject   : /DC=org/...
+timeleft  : 23:59:59
+
     
 ## Upload to dCache
 
