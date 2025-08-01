@@ -2,172 +2,127 @@
 
 This repository contains code to reduce large DUNE flux `dk2nu` and `AlcoveTracks` ROOT files into lightweight skims for analysis.
 
+Local Skimming (for interactive or small-scale use)
+
 ## Contents
+run_dk2nuTree.cpp, dk2nuTree.C/h — Skimming of dk2nuTree
+processOneFile.cpp, alcoveTree.C/h — Skimming of AlcoveTracks tree
+run_skimming_batch.sh — Batch processor for full list
+run_skimming_batch_test.sh — Test run (12 files)
+filelist_24.txt — Example file list
 
-- `run_dk2nuTree.cpp`, `dk2nuTree.C/h` — Skimming of `dk2nuTree`
-- `processOneFile.cpp`, `alcoveTree.C/h` — Skimming of `AlcoveTracks` tree
-- `run_skimming_batch.sh` — Batch processor for all files
-- `run_skimming_batch_test.sh` — Test run for 12 files
-- `filelist_24.txt` — Example input list for testing
-
-
-## How to Run
-
-1. Compile the code
-
+## How to Run Locally
+Compile the code:
 g++ -o run_dk2nuTree run_dk2nuTree.cpp dk2nuTree.C $(root-config --cflags --libs)
-
 g++ -o processOneFile processOneFile.cpp alcoveTree.C $(root-config --cflags --libs)
 
-2. Edit run_skimming_batch.sh to set
+## Edit run_skimming_batch.sh to define:
+INPUT_DIR=...
+NJOBS=...
 
-INPUT_DIR
-NJOBS
-
-3. Run the test batch (12 files)
-
+## Run a test batch:
 bash run_skimming_batch_test.sh
 
-
-4. Run full batch
-
+## Run full batch:
 bash run_skimming_batch.sh
 
+## Outputs will appear in:
 
-Output
+dk2nu_skims/     # skimmed dk2nu trees
+alcove_skims/    # skimmed AlcoveTracks trees
+logs/            # log files
 
-dk2nu_skims/ — reduced dk2nu trees
+## Grid Skimming (FNAL Jobsub/Condor)
 
-alcove_skims/ — reduced alcove trees
+Use this for large-scale submission to the FNAL grid.
 
-logs/ — logs for debugging
+## Grid-Specific Files
+run_dk2nuTree — Compiled binary
+skim_job_wrapper_final.sh — Job wrapper for the grid
+filelist_12.txt — Input file list (1 line = 1 .root file)
+submit_batch.sh — Optional batch submit script
 
-# dk2nu Skimming Tools (Grid Version)
-
-This repository contains scripts for skimming large DUNE flux `dk2nu` files on the FNAL Grid (using jobsub/Condor).
-
-## Contents
-
-- `skim_job_wrapper_final.sh` — Job wrapper script for Condor jobs.
-- `submit_batch.sh` — Batch submission script to process many files at once.
-- `filelist_12.txt` — Example input list of `dk2nu.root` files for batch submission.
-
-
-
-### Environment Setup (on GPVM)
-Before building or submitting jobs, make sure to set up your environment:
-
-```bash
+## Environment Setup (on GPVM)
 source /cvmfs/dune.opensciencegrid.org/dune-spack/spack-v0.23.0-fermi/BIWG/setup-env.sh
 spacktivate g4lbnf-geant4-10-4-3-gcc-12-2-0-cxx17-prof-almalinux9-x86_64_v2
 
-
-## Prepare Your Working Directory
-
-Before packaging anything, make sure your working directory (let’s call it skim_job_test_final/) looks like this:
-
+## Prepare the Working Directory
+Your skim_job_test_final/ directory should contain:
 skim_job_test_final/
-├── run_dk2nuTree              # Compiled binary
-├── other_config_or_input_files
-
-You can place any additional files needed by run_dk2nuTree in this directory, but do not include your wrapper script (skim_job_wrapper_final.sh) or any tarballs.
+├── run_dk2nuTree
+├── filelist_12.txt
+├── submit_batch.sh        # optional
+ Do NOT include skim_job_wrapper_final.sh or .tar.bz2 files in this directory.
 
 ## Create the Tarball
-From the parent directory (i.e., the directory that contains skim_job_test_final/), run the following commands:
-cd /path/to/your/parent_directory/   # Replace with actual path
-ls                                    # Sanity check: should see 'skim_job_test_final'
-
-# Create the tarball
+From the parent directory:
 tar --exclude="*.tar.bz2" --exclude="skim_job_wrapper_final.sh" \
     -cjvf skim_job_test_final.tar.bz2 -C . skim_job_test_final
--C . skim_job_test_final means: go into the current directory and add skim_job_test_final and its contents to the archive.
+    
+## Upload to dCache
 
+ifdh cp --force skim_job_test_final.tar.bz2 /pnfs/dune/scratch/users/<YOUR_USERNAME>/
+Replace <YOUR_USERNAME> with your actual Fermilab username.
 
-## Copy to dCache Scratch Area
-ifdh cp --force skim_job_test_final.tar.bz2 /pnfs/dune/scratch/users/YOUR_USERNAME/
-Replace YOUR_USERNAME with your actual Fermilab username.
-
-
-### 2. Submit a single job manually
-# dk2nuTree Skimming Workflow
-
-This repository contains scripts and executables to perform skimming of dk2nu flux ROOT files for the DUNE Alcove setup using `processOneFile`.
-
-## Contents
-
-- `skim_job_wrapper_final.sh` – Job wrapper script used by `jobsub_submit`. Handles environment setup, input fetching, and file processing.
-- `run_dk2nuTree` – Compiled binary that reads input `.root` files and writes skimmed output.
-- `README.md` – This file.
-
-## How to Use
-
-### 1. Build Tarball
-
-From within `g4lbne/`, run:
-
-```bash
-tar -cjvf skim_job_test_final.tar.bz2 -C skim_job_test_final .
-
-### 2. Upload to pnfs
-
-ifdh cp --force skim_job_test_final.tar.bz2 /pnfs/dune/scratch/users/YOUR_USERNAME/
-
-### 3. Submit grid job
- 
+## Submit a Single Test Job
 jobsub_submit \
-  --memory=4000MB --disk=4GB --expected-lifetime=1h \
-  --group=dune --role=Analysis \
+  --group=dune \
+  --role=Analysis \
+  --memory=4000MB \
+  --disk=4GB \
+  --expected-lifetime=1h \
   --resource-provides=usage_model=OPPORTUNISTIC \
-<<<<<<< HEAD
-  --tar_file_name=/pnfs/dune/scratch/users/YOUR_USERNAME/skim_job_test_final.tar.bz2 \
-  -d OUTPUT /pnfs/dune/scratch/users/YOUR_USERNAME/skimmed_output/ \
-  -L /pnfs/dune/scratch/users/YOUR_USERNAME/jobsub/skim_job_test_$RANDOM.log \
+  --tar_file_name=/pnfs/dune/scratch/users/<YOUR_USERNAME>/skim_job_test_final.tar.bz2 \
+  -d OUTPUT /pnfs/dune/scratch/users/<YOUR_USERNAME>/skimmed_output/ \
+  -L /pnfs/dune/scratch/users/<YOUR_USERNAME>/jobsub_logs/skim_job_$RANDOM.log \
   file:///full/path/to/skim_job_wrapper_final.sh \
-  /pnfs/dune/scratch/users/YOUR_USERNAME/path/to/your_input_file.dk2nu.root
+  /pnfs/dune/persistent/users/<YOUR_USERNAME>/your_input_file.root
 
 
-### 3. Submit many jobs automatically
+## Submit Batch Jobs Using a File List
+Make sure filelist_12.txt contains full paths to .root files.
 
-Prepare a list of input files (filelist_12.txt) then run:
+Example submit_batch.sh:
 
+#!/bin/bash
+
+USERNAME=sganguly
+WRAPPER=/exp/dune/app/users/$USERNAME/AL9/skim_job_test_final/skim_job_wrapper_final.sh
+TARBALL=/pnfs/dune/scratch/users/$USERNAME/skim_job_test_final.tar.bz2
+OUTDIR=/pnfs/dune/scratch/users/$USERNAME/skimmed_output
+LOGDIR=/pnfs/dune/scratch/users/$USERNAME/jobsub_logs
+
+while read -r INPUT_FILE; do
+  jobsub_submit \
+    --group=dune \
+    --role=Analysis \
+    --memory=4000MB \
+    --disk=4GB \
+    --expected-lifetime=1h \
+    --resource-provides=usage_model=OPPORTUNISTIC \
+    --tar_file_name=$TARBALL \
+    -d OUTPUT $OUTDIR \
+    -L $LOGDIR/skim_job_$RANDOM.log \
+    file://$WRAPPER \
+    $INPUT_FILE
+done < filelist_12.txt
+
+
+Make it executable and run:
+chmod +x submit_batch.sh
 ./submit_batch.sh
 
 
-### 4. Check Outputs
-Skimmed ROOT files will appear in:
-/pnfs/dune/scratch/users/YOUR_USERNAME/skimmed_output/
+## Monitor and Fetch Logs
+Check status:
+jobsub_q --user <YOUR_USERNAME>
 
-Logs will appear in:
-/pnfs/dune/scratch/users/YOUR_USERNAME/jobsub/
-
-
-### 5. Monitor jobs
-
-jobsub_q --user YOUR_USERNAME -G dune
+Fetch job logs:
+jobsub_fetchlog --jobid <JOB_ID> --user <YOUR_USERNAME>
 
 
 
-run_dk2nuTree must be built beforehand.
-
-CVMFS and Spack environment is auto-loaded inside the job wrapper.
-
-Jobs use OPPORTUNISTIC Grid slots by default.
-
-  --tar_file_name=/pnfs/dune/scratch/users/YOUR_USERNAME/skim_job_alcove_final.tar.bz2 \
-  -d OUTPUT /pnfs/dune/scratch/users/YOUR_USERNAME/skimmed_output_alcove/ \
-  -L /pnfs/dune/scratch/users/YOUR_USERNAME/jobsub/skim_job_alcove_$RANDOM.log \
-  file:///exp/dune/app/users/YOUR_USERNAME/duneML_nominal/g4lbne/skim_job_alcove_final/skim_job_wrapper_alcove.sh \
-  /pnfs/dune/scratch/users/YOUR_USERNAME/fluxfiles/g4lbne/your_input_file.root
-
-
-### 4. Check output
-/pnfs/dune/scratch/users/YOUR_USERNAME/skimmed_output_alcove/
-
-### 5. Monitor jobs
-watch -n 5 'jobsub_q --user YOUR_USERNAME -G dune'
-
-
-Grid Skimming (AlcoveTracks)
+## Grid Skimming (AlcoveTracks)
 
 1. Prepare Tarball
 
