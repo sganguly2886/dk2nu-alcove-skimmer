@@ -5,31 +5,44 @@ This repository contains code to reduce large DUNE flux `dk2nu` and `AlcoveTrack
 Local Skimming (for interactive or small-scale use)
 
 ## Contents
+
 run_dk2nuTree.cpp, dk2nuTree.C/h — Skimming of dk2nuTree
+
 processOneFile.cpp, alcoveTree.C/h — Skimming of AlcoveTracks tree
+
 run_skimming_batch.sh — Batch processor for full list
+
 run_skimming_batch_test.sh — Test run (12 files)
+
 filelist_24.txt — Example file list
 
 ## How to Run Locally
 Compile the code:
+
 g++ -o run_dk2nuTree run_dk2nuTree.cpp dk2nuTree.C $(root-config --cflags --libs)
+
 g++ -o processOneFile processOneFile.cpp alcoveTree.C $(root-config --cflags --libs)
 
 ## Edit run_skimming_batch.sh to define:
+
 INPUT_DIR=...
+
 NJOBS=...
 
 ## Run a test batch:
+
 bash run_skimming_batch_test.sh
 
 ## Run full batch:
+
 bash run_skimming_batch.sh
 
 ## Outputs will appear in:
 
 dk2nu_skims/     # skimmed dk2nu trees
+
 alcove_skims/    # skimmed AlcoveTracks trees
+
 logs/            # log files
 
 ## Grid Skimming (FNAL Jobsub/Condor)
@@ -37,17 +50,25 @@ logs/            # log files
 Use this for large-scale submission to the FNAL grid.
 
 ## Grid-Specific Files
+
 run_dk2nuTree — Compiled binary
+
 skim_job_wrapper_final.sh — Job wrapper for the grid
+
 filelist_12.txt — Input file list (1 line = 1 .root file)
+
 submit_batch.sh — Optional batch submit script
 
 ## Environment Setup (on GPVM)
+
 source /cvmfs/dune.opensciencegrid.org/dune-spack/spack-v0.23.0-fermi/BIWG/setup-env.sh
+
 spacktivate g4lbnf-geant4-10-4-3-gcc-12-2-0-cxx17-prof-almalinux9-x86_64_v2
 
 ## Prepare the Working Directory
+
 Your skim_job_test_final/ directory should contain:
+
 skim_job_test_final/
 ├── run_dk2nuTree
 ├── filelist_12.txt
@@ -55,7 +76,9 @@ skim_job_test_final/
  Do NOT include skim_job_wrapper_final.sh or .tar.bz2 files in this directory.
 
 ## Create the Tarball
+
 From the parent directory:
+
 tar --exclude="*.tar.bz2" --exclude="skim_job_wrapper_final.sh" \
     -cjvf skim_job_test_final.tar.bz2 -C . skim_job_test_final
 
@@ -63,9 +86,11 @@ tar --exclude="*.tar.bz2" --exclude="skim_job_wrapper_final.sh" \
 ## Upload to dCache
 
 ifdh cp --force skim_job_test_final.tar.bz2 -D /pnfs/dune/scratch/users/<YOUR_USERNAME>/
+
 Replace <YOUR_USERNAME> with your actual Fermilab username.
 
 ## Submit a Single Test Job
+
 jobsub_submit \
   --group=dune \
   --role=Analysis \
@@ -81,6 +106,7 @@ jobsub_submit \
 
 
 ## Submit Batch Jobs Using a File List
+
 Make sure filelist_12.txt contains full paths to .root files.
 
 Example submit_batch.sh:
@@ -110,15 +136,20 @@ done < filelist_12.txt
 
 
 Make it executable and run:
+
 chmod +x submit_batch.sh
+
 ./submit_batch.sh
 
 
 ## Monitor and Fetch Logs
+
 Check status:
+
 jobsub_q --user <YOUR_USERNAME>
 
 Fetch job logs:
+
 jobsub_fetchlog --jobid <JOB_ID> --user <YOUR_USERNAME>
 
 
@@ -128,7 +159,9 @@ jobsub_fetchlog --jobid <JOB_ID> --user <YOUR_USERNAME>
 1. Prepare Tarball
 
 cd /exp/dune/app/users/sganguly/duneML_nominal/g4lbne
+
 tar -cjvf skim_job_alcove_final.tar.bz2 -C skim_job_alcove_final .
+
 ifdh cp --force skim_job_alcove_final.tar.bz2 /pnfs/dune/scratch/users/sganguly/
 
 2. Submit Job
