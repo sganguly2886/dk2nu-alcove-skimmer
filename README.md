@@ -10,6 +10,7 @@ This repository contains code to reduce large DUNE flux `dk2nu` and `AlcoveTrack
 - `run_skimming_batch_test.sh` — Test run for 12 files
 - `filelist_24.txt` — Example input list for testing
 
+
 ## How to Run
 
 1. Compile the code
@@ -61,17 +62,30 @@ source /cvmfs/dune.opensciencegrid.org/dune-spack/spack-v0.23.0-fermi/BIWG/setup
 spacktivate g4lbnf-geant4-10-4-3-gcc-12-2-0-cxx17-prof-almalinux9-x86_64_v2
 
 
-## How to Run
+## Prepare Your Working Directory
+
+Before packaging anything, make sure your working directory (let’s call it skim_job_test_final/) looks like this:
+
+skim_job_test_final/
+├── run_dk2nuTree              # Compiled binary
+├── other_config_or_input_files
+
+You can place any additional files needed by run_dk2nuTree in this directory, but do not include your wrapper script (skim_job_wrapper_final.sh) or any tarballs.
+
+## Create the Tarball
+From the parent directory (i.e., the directory that contains skim_job_test_final/), run the following commands:
+cd /path/to/your/parent_directory/   # Replace with actual path
+ls                                    # Sanity check: should see 'skim_job_test_final'
+
+# Create the tarball
+tar --exclude="*.tar.bz2" --exclude="skim_job_wrapper_final.sh" \
+    -cjvf skim_job_test_final.tar.bz2 -C . skim_job_test_final
+-C . skim_job_test_final means: go into the current directory and add skim_job_test_final and its contents to the archive.
 
 
-### 1. Setup your tarball
-
-Prepare your tarball with the compiled `run_dk2nuTree` binary (no need to include the wrapper):
-
-```bash
-cd /your/workdir/
-tar --exclude="*.tar.bz2" --exclude="skim_job_wrapper_final.sh" -cjvf skim_job_test_final.tar.bz2 -C skim_job_test_final .
+## Copy to dCache Scratch Area
 ifdh cp --force skim_job_test_final.tar.bz2 /pnfs/dune/scratch/users/YOUR_USERNAME/
+Replace YOUR_USERNAME with your actual Fermilab username.
 
 
 ### 2. Submit a single job manually
